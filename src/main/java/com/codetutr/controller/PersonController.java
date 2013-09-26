@@ -2,6 +2,7 @@ package com.codetutr.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +21,11 @@ public class PersonController {
 	@Autowired
 	public PersonController(PersonService personService) {
 		this.personService = personService;
+	}
+
+	@RequestMapping("list")
+	public String userList(Model model) {
+		return "users";
 	}
 
 	@RequestMapping("person/random")
