@@ -5,7 +5,19 @@ public class Person {
 
 	private String name;
 	private Integer age;
-	
+
+	public static final Person UNKNOWN = new Person("N/A", -1);
+
+	public Person() {
+		super();
+		name = null;
+		age = null;
+	}
+
+	public Person(String name, Integer age) {
+		this.name = name;
+		this.age = age;
+	}
 	public String getName() {
 		return name;
 	}

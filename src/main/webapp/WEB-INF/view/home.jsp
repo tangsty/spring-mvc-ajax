@@ -38,8 +38,16 @@
 			<input type="submit" value="Get Person By ID" /> <br /><br/>
 			<div id="personIdResponse"> </div>
 		</form>
-		
-		<hr/>
+
+        <h2>Remove By ID</h2>
+        <form id="removePersonForm">
+            <div class="error hide" id="idError">Please enter a valid ID in range 0-3</div>
+            <label for="personId">ID (0-3): </label><input name="id" id="personId" value="0" type="number" />
+            <input type="submit" value="Remove Person By ID" /> <br /><br/>
+            <div id="removeIdResponse"> </div>
+        </form>
+
+        <hr/>
 		
 		<h2>Submit new Person</h2>
 		<form id="newPersonForm">
@@ -61,12 +69,12 @@
 		$(document).ready(function() {
 			
 			// Random Person AJAX Request
-			$('#randomPerson').click(function() {
-				$.getJSON('${pageContext.request.contextPath}/api/person/random', function(person) {
-					$('#personResponse').text(person.name + ', age ' + person.age);
-				});
-			});
-			
+            $('#randomPerson').click(function() {
+                $.getJSON('${pageContext.request.contextPath}/api/person/random', function(person) {
+                    $('#personResponse').text(person.name + ', age ' + person.age);
+                });
+            });
+
 			// Request Person by ID AJAX
 			$('#idForm').submit(function(e) {
 				var personId = +$('#personId').val();
@@ -77,14 +85,20 @@
 				});
 				e.preventDefault(); // prevent actual form submit
 			});
-			
-			// Save Person AJAX Form Submit
-			$('#randomPerson').click(function() {
-				$.getJSON('${pageContext.request.contextPath}/api/person/random', function(person) {
-					$('#personResponse').text(person.name + ', age ' + person.age);
-				});
-			});
-			
+
+            // Remove Person AJAX Form Submit
+            $('#removePersonForm').submit(function(e) {
+                var personId = +$('#personId').val();
+                if(!validatePersonId(personId))
+                    return false;
+                $.post('${pageContext.request.contextPath}/api/person/remove/' + personId, function(response) {
+                    $('#removeIdResponse').text(response);
+                });
+
+                e.preventDefault(); // prevent actual form submit and page reload
+            });
+
+            // Save Person AJAX Form Submit
 			$('#newPersonForm').submit(function(e) {
 				// will pass the form date using the jQuery serialize function
 				$.post('${pageContext.request.contextPath}/api/person', $(this).serialize(), function(response) {
@@ -98,7 +112,7 @@
 		
 		function validatePersonId(personId) {
 			console.log(personId);
-			if(personId === undefined || personId < 0 || personId > 3) {
+			if(personId === undefined || personId < 0) {
 				$('#idError').show();
 				return false;
 			}

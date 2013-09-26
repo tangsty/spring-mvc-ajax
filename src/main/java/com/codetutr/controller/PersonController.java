@@ -33,7 +33,14 @@ public class PersonController {
 	public Person getById(@PathVariable Long id) {
 		return personService.getById(id);
 	}
-	
+
+	@RequestMapping("person/remove/{id}")
+	@ResponseBody
+	public String removeById(@PathVariable Long id) {
+		Person removed = personService.removeById(id);
+		return "Removed person: " + removed.toString();
+	}
+
 	/* same as above method, but is mapped to
 	 * /api/person?id= rather than /api/person/{id}
 	 */
