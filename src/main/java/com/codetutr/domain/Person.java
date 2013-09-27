@@ -2,22 +2,33 @@ package com.codetutr.domain;
 
 
 public class Person {
+	public static final Person UNKNOWN = new Person(-1L, "N/A", -1);
 
+	private Long id;
 	private String name;
 	private Integer age;
 
-	public static final Person UNKNOWN = new Person("N/A", -1);
-
 	public Person() {
 		super();
+		id = -1L;
 		name = null;
 		age = null;
 	}
 
-	public Person(String name, Integer age) {
+	public Person(Long id, String name, Integer age) {
+		this.id = id;
 		this.name = name;
 		this.age = age;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -25,7 +36,7 @@ public class Person {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public Integer getAge() {
 		return age;
 	}
@@ -36,8 +47,8 @@ public class Person {
 
 	@Override
 	public String toString() {
-		return "Person [name=" + name + ", age=" + age + "]";
+		return "Person [id=" + id + " name=" + name + ", age=" + age + "]";
 	}
-	
-	
+
+
 }

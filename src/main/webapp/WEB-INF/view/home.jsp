@@ -25,7 +25,8 @@
 		<p>This page demonstrates Spring MVC's powerful Ajax functionality. Retrieve a
 		random person, retrieve a person by ID, or save a new person, all without page reload.
 		</p>
-		
+
+        <h2><a href="${pageContext.request.contextPath}/api/list" target="_blank">People List</a></h2>
 		<h2>Random Person Generator</h2>
 		<input type="submit" id="randomPerson" value="Get Random Person" /><br/><br/>
 		<div id="personResponse"> </div>
@@ -34,16 +35,16 @@
 		
 		<h2>Get By ID</h2>
 		<form id="idForm">
-			<div class="error hide" id="idError">Please enter a valid ID in range 0-3</div>
-			<label for="personId">ID (0-3): </label><input name="id" id="personId" value="0" type="number" />
+			<div class="error hide" id="idError">Please enter a valid ID</div>
+			<label for="getPersonId">ID: </label><input name="getId" id="getPersonId" value="0" type="number" />
 			<input type="submit" value="Get Person By ID" /> <br /><br/>
 			<div id="personIdResponse"> </div>
 		</form>
 
         <h2>Remove By ID</h2>
         <form id="removePersonForm">
-            <div class="error hide" id="idError">Please enter a valid ID in range 0-3</div>
-            <label for="personId">ID (0-3): </label><input name="id" id="personId" value="0" type="number" />
+            <div class="error hide" id="idError">Please enter a valid ID</div>
+            <label for="removePersonId">ID: </label><input name="removeId" id="removePersonId" value="0" type="number" />
             <input type="submit" value="Remove Person By ID" /> <br /><br/>
             <div id="removeIdResponse"> </div>
         </form>
@@ -78,7 +79,7 @@
 
 			// Request Person by ID AJAX
 			$('#idForm').submit(function(e) {
-				var personId = +$('#personId').val();
+				var personId = +$('#getPersonId').val();
 				if(!validatePersonId(personId)) 
 					return false;
 				$.get('${pageContext.request.contextPath}/api/person/' + personId, function(person) {
@@ -89,7 +90,7 @@
 
             // Remove Person AJAX Form Submit
             $('#removePersonForm').submit(function(e) {
-                var personId = +$('#personId').val();
+                var personId = +$('#removePersonId').val();
                 if(!validatePersonId(personId))
                     return false;
                 $.post('${pageContext.request.contextPath}/api/person/remove/' + personId, function(response) {

@@ -1,5 +1,8 @@
 package com.codetutr.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,13 +16,13 @@ import com.codetutr.domain.Person;
 public class PersonServiceImpl implements PersonService {
 
 	private static String[] names = {"Nikolaus Otto", "Robert Ford", "Gottlieb Daimler", "Lt. General Masaharu Homma"};
-	private static Map<Long, Person> idPersionMap = new ConcurrentHashMap<>();
+	private static Map<Long, Person> idPersonMap = new ConcurrentHashMap<>();
 	private static AtomicLong nextId = new AtomicLong(-1);
 
 	static {
 		for(String name : names) {
 			Long id = nextId.addAndGet(1);
-			idPersionMap.put(id, new Person(name, 50));
+			idPersonMap.put(id, new Person(id, name, 50));
 		}
 	}
 
@@ -28,27 +31,41 @@ public class PersonServiceImpl implements PersonService {
 		Person person = new Person();
 		person.setName(randomName());
 		person.setAge(randomAge());
+		save(person);
 		return person;
 	}
 
 	@Override
 	public Person getById(Long id) {
-		if (idPersionMap.containsKey(id))
-			return idPersionMap.get(id);
+		if (idPersonMap.containsKey(id))
+			return idPersonMap.get(id);
 		return Person.UNKNOWN;
 	}
 	
 	@Override
 	public void save(Person person) {
 		Long id = nextId.addAndGet(1);
-		idPersionMap.put(id, person);
+		person.setId(id);
+		idPersonMap.put(id, person);
+	}
+
+	@Override
+	public Person update(Person person) {
+		Long id = person.getId();
+		if (idPersonMap.containsKey(id)) {
+			idPersonMap.put(id, person);
+		}
+		else {
+			person = Person.UNKNOWN;
+		}
+		return person;
 	}
 
 	@Override
 	public Person removeById(Long id) {
-		if (idPersionMap.containsKey(id)) {
-			Person removed = idPersionMap.get(id);
-			idPersionMap.remove(id);
+		if (idPersonMap.containsKey(id)) {
+			Person removed = idPersonMap.get(id);
+			idPersonMap.remove(id);
 			return removed;
 		}
 		return Person.UNKNOWN;
@@ -64,4 +81,16 @@ public class PersonServiceImpl implements PersonService {
 		return names[random.nextInt(names.length)];
 	}
 
+	@Override
+	public List<Person> getPeople() {
+		int idCnt = idPersonMap.size();
+		Long[] ids = new Long[idCnt];
+		idPersonMap.keySet().toArray(ids);
+		Arrays.sort(ids);
+		List<Person> results = new ArrayList<>();
+		for(Long id : ids) {
+			results.add(idPersonMap.get(id));
+		}
+		return results;
+	}
 }

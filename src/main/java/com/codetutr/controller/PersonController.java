@@ -1,5 +1,7 @@
 package com.codetutr.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,8 @@ public class PersonController {
 
 	@RequestMapping("list")
 	public String userList(Model model) {
+		List<Person> people = personService.getPeople();
+		model.addAttribute("people", people);
 		return "users";
 	}
 
@@ -55,17 +59,55 @@ public class PersonController {
 	public Person getByIdFromParam(@RequestParam("id") Long id) {
 		return personService.getById(id);
 	}
-	
+
 	/**
 	 * Saves new person. Spring automatically binds the name
 	 * and age parameters in the request to the person argument
-	 * @param person
+	 * @param value value submitted from browser
 	 * @return String indicating success or failure of save
 	 */
-	@RequestMapping(value="person", method=RequestMethod.POST)
+	@RequestMapping(value="person", params="value", method=RequestMethod.POST)
 	@ResponseBody
-	public String savePerson(Person person) {
-		personService.save(person);
-		return "Saved person: " + person.toString();
+	public String savePerson(@RequestParam("value") String value) {
+		return "Updated: " + value;
+	}
+
+	/**
+	 * Updated person. Spring automatically binds the name
+	 * and age parameters in the request to the person argument
+	 * @param id person Id
+	 * @param column updated column index
+	 * @param newValue new column value
+	 * @return String indicating success or failure of save
+	 */
+	@RequestMapping(value="person/update", params={"row_id", "column", "value"})
+	@ResponseBody
+	public String updatePerson(@RequestParam("row_id") Long id, @RequestParam("column") Integer column, @RequestParam("value") String newValue) {
+		Person person = personService.getById(id);
+		String colName = getColumn(column);
+		if (colName.startsWith("FIX:"))
+			return "无法修改为 \"" + newValue + "\"";
+		else {
+			if (column == 2)
+				person.setName(newValue);
+			else
+				person.setAge(Integer.parseInt(newValue));
+		}
+		return newValue;
+	}
+
+	public static String getColumn(int col) {
+		switch (col) {
+			case 0:
+				return "FIX:order";
+			case 1:
+				return "FIX:id";
+			case 2:
+				return "name";
+			case 3:
+				return "age";
+			default:
+				return "FIX:unknown";
+		}
 	}
 }
